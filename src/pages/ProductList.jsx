@@ -10,11 +10,17 @@ import {
   Icon,
   Menu,
   Table,
+  Button,
 } from "semantic-ui-react";
 import ProductService from "../services/productService";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../store/actions/cartActions";
+import { toast } from "react-toastify";
 
 export default function ProductList() {
+  const dispatch = useDispatch();
+
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -23,6 +29,11 @@ export default function ProductList() {
       .getProducts()
       .then((result) => setProducts(result.data.products));
   }, []);
+
+  const handleAddToCart = (product) => {
+    dispatch(addToCart(product));
+    toast.success(product.title + " sepete eklendi!");
+  };
 
   return (
     <div>
@@ -34,6 +45,7 @@ export default function ProductList() {
             <TableHeaderCell>Stok Adedi</TableHeaderCell>
             <TableHeaderCell>Açıklama</TableHeaderCell>
             <TableHeaderCell>Kategori</TableHeaderCell>
+            <TableHeaderCell></TableHeaderCell>
           </TableRow>
         </TableHeader>
 
@@ -47,6 +59,11 @@ export default function ProductList() {
               <TableCell>{product.stock}</TableCell>
               <TableCell>{product.description}</TableCell>
               <TableCell>{product.category}</TableCell>
+              <Table.Cell>
+                <Button onClick={() => handleAddToCart(product)}>
+                  Sepete Ekle
+                </Button>
+              </Table.Cell>
             </TableRow>
           ))}
         </TableBody>
